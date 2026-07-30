@@ -1,0 +1,208 @@
+:root {
+    color-scheme: light;
+    font-family: system-ui, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f5f7fb;
+    color: #172033;
+}
+
+a {
+    color: #2457c5;
+}
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem max(1rem, calc((100% - 1100px) / 2));
+    background: #fff;
+    border-bottom: 1px solid #dbe2ea;
+}
+
+.site-header nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.brand {
+    color: #172033;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.card,
+.auth-card {
+    max-width: 520px;
+    padding: 2rem;
+    background: #fff;
+    border: 1px solid #dbe2ea;
+    border-radius: 0.75rem;
+}
+
+form,
+label {
+    display: grid;
+    gap: 0.5rem;
+}
+
+form {
+    gap: 1rem;
+}
+
+input,
+select,
+button {
+    padding: 0.65rem 0.8rem;
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.filters {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.link-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #2457c5;
+}
+
+.alert {
+    color: #9f1239;
+}
+
+.success {
+    color: #15803d;
+    font-weight: 700;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+th,
+td {
+    padding: 0.75rem;
+    border: 1px solid #dbe2ea;
+    text-align: left;
+    vertical-align: top;
+}
+
+.activity-action {
+    min-width: 7.5rem;
+    white-space: nowrap;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.75rem;
+    margin-top: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border: 1px solid #dbe2ea;
+    border-radius: 0.5rem;
+}
+
+.pagination a {
+    padding: 0.4rem 0.7rem;
+    border: 1px solid #b9c6d8;
+    border-radius: 0.35rem;
+    text-decoration: none;
+}
+
+.pagination span {
+    margin: 0 auto;
+    font-weight: 600;
+}
+
+.chart-container {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #dbe2ea;
+}
+
+#activity-chart {
+    display: block;
+    width: 100%;
+    min-height: 280px;
+}
+
+.chart-axis {
+    fill: none;
+    stroke: #64748b;
+    stroke-width: 1;
+}
+
+.chart-label {
+    fill: #475569;
+    font-size: 11px;
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.chart-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-swatch {
+    width: 1.5rem;
+    height: 0.2rem;
+    background: currentColor;
+}
+
+.chart-swatch-page-a {
+    color: #2563eb;
+}
+
+.chart-swatch-page-b {
+    color: #16a34a;
+}
+
+.chart-swatch-buy-cow {
+    color: #dc2626;
+}
+
+.chart-swatch-download {
+    color: #9333ea;
+}
