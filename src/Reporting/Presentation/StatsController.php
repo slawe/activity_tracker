@@ -8,10 +8,9 @@ use App\Activity\Application\ActivitySearchHandler;
 use App\Activity\Application\ActivitySearchQuery;
 use App\Activity\Application\ActivitySearchResult;
 use App\Activity\Domain\ActivityAction;
-use App\Auth\Application\CurrentUserProvider;
 use App\Auth\Domain\UserRepositoryInterface;
+use App\Auth\Presentation\AdminAccessGuard;
 use App\Shared\Kernel\Http\HtmlResponse;
-use App\Shared\Kernel\Http\RedirectResponse;
 use App\Shared\Kernel\Request;
 use App\Shared\Kernel\Response;
 use App\Shared\Kernel\Security\CsrfTokenManager;
@@ -21,7 +20,7 @@ use DateTimeImmutable;
 final class StatsController
 {
     public function __construct(
-        private readonly CurrentUserProvider $currentUserProvider,
+        private readonly AdminAccessGuard $adminAccessGuard,
         private readonly ActivitySearchHandler $search,
         private readonly UserRepositoryInterface $users,
         private readonly CsrfTokenManager $csrf,
@@ -31,12 +30,10 @@ final class StatsController
 
     public function show(Request $request): Response
     {
-        $user = $this->currentUserProvider->get();
-        if ($user === null) {
-            return new RedirectResponse('/login');
-        }
-        if (!$user->isAdmin()) {
-            return new HtmlResponse('<h1>403 Forbidden</h1>', 403);
+        $admin = $this->adminAccessGuard->requireAdmin();
+
+        if ($admin instanceof Response) {
+            return $admin;
         }
 
         $dateFrom = $this->date($request->queryString('date_from'));
@@ -62,7 +59,7 @@ final class StatsController
 
         return new HtmlResponse($this->views->render('admin/stats.php', [
             'title' => 'Activity Statistics',
-            'currentUser' => $user,
+            'currentUser' => $admin,
             'csrfToken' => $this->csrf->token(),
             'result' => $result,
             'actions' => ActivityAction::cases(),

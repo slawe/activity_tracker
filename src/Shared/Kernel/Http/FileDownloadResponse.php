@@ -19,7 +19,7 @@ final class FileDownloadResponse extends Response
 
         parent::__construct(200, [
             'Content-Type' => 'application/octet-stream',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', addslashes($downloadName)),
+            'Content-Disposition' => $this->contentDisposition($downloadName),
             'Content-Length' => (string) filesize($filePath),
             'X-Content-Type-Options' => 'nosniff',
         ]);
@@ -28,5 +28,16 @@ final class FileDownloadResponse extends Response
     protected function sendBody(): void
     {
         readfile($this->filePath);
+    }
+
+    private function contentDisposition(string $downloadName): string
+    {
+        $fallback = preg_replace('/[^A-Za-z0-9._-]/', '_', $downloadName) ?: 'download';
+
+        return sprintf(
+            "attachment; filename=\"%s\"; filename*=UTF-8''%s",
+            $fallback,
+            rawurlencode($downloadName),
+        );
     }
 }

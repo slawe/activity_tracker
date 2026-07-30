@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Reporting\Presentation;
 
-use App\Auth\Application\CurrentUserProvider;
+use App\Auth\Presentation\AdminAccessGuard;
 use App\Reporting\Application\DailyActivityReportHandler;
 use App\Reporting\Application\DailyActivityReportQuery;
 use App\Shared\Kernel\Http\HtmlResponse;
-use App\Shared\Kernel\Http\RedirectResponse;
 use App\Shared\Kernel\Request;
 use App\Shared\Kernel\Response;
 use App\Shared\Kernel\Security\CsrfTokenManager;
@@ -18,7 +17,7 @@ use DateTimeImmutable;
 final class ReportsController
 {
     public function __construct(
-        private readonly CurrentUserProvider $currentUserProvider,
+        private readonly AdminAccessGuard $adminAccessGuard,
         private readonly DailyActivityReportHandler $reports,
         private readonly CsrfTokenManager $csrf,
         private readonly ViewRenderer $views,
@@ -27,12 +26,10 @@ final class ReportsController
 
     public function show(Request $request): Response
     {
-        $user = $this->currentUserProvider->get();
-        if ($user === null) {
-            return new RedirectResponse('/login');
-        }
-        if (!$user->isAdmin()) {
-            return new HtmlResponse('<h1>403 Forbidden</h1>', 403);
+        $admin = $this->adminAccessGuard->requireAdmin();
+
+        if ($admin instanceof Response) {
+            return $admin;
         }
 
         $today = new DateTimeImmutable('today');
@@ -53,7 +50,7 @@ final class ReportsController
 
         return new HtmlResponse($this->views->render('admin/reports.php', [
             'title' => 'Daily Reports',
-            'currentUser' => $user,
+            'currentUser' => $admin,
             'csrfToken' => $this->csrf->token(),
             'reports' => $reports,
             'chartData' => $chartData,

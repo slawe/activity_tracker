@@ -15,6 +15,7 @@ use App\Auth\Application\LogoutUserHandler;
 use App\Auth\Application\RegisterUserHandler;
 use App\Auth\Domain\UserRepositoryInterface;
 use App\Auth\Infrastructure\PdoUserRepository;
+use App\Auth\Presentation\AdminAccessGuard;
 use App\Auth\Presentation\LoginController;
 use App\Auth\Presentation\LogoutController;
 use App\Auth\Presentation\RegisterController;
@@ -139,6 +140,9 @@ final class Application
             $c->get(Session::class),
             $c->get(UserRepositoryInterface::class),
         ));
+        $container->set(AdminAccessGuard::class, static fn (Container $c): AdminAccessGuard => new AdminAccessGuard(
+            $c->get(CurrentUserProvider::class),
+        ));
         $container->set(RegisterUserHandler::class, static fn (Container $c): RegisterUserHandler => new RegisterUserHandler(
             $c->get(UserRepositoryInterface::class),
             $c->get(PasswordHasher::class),
@@ -216,14 +220,14 @@ final class Application
             $c->get(ViewRenderer::class),
         ));
         $container->set(StatsController::class, static fn (Container $c): StatsController => new StatsController(
-            $c->get(CurrentUserProvider::class),
+            $c->get(AdminAccessGuard::class),
             $c->get(ActivitySearchHandler::class),
             $c->get(UserRepositoryInterface::class),
             $c->get(CsrfTokenManager::class),
             $c->get(ViewRenderer::class),
         ));
         $container->set(ReportsController::class, static fn (Container $c): ReportsController => new ReportsController(
-            $c->get(CurrentUserProvider::class),
+            $c->get(AdminAccessGuard::class),
             $c->get(DailyActivityReportHandler::class),
             $c->get(CsrfTokenManager::class),
             $c->get(ViewRenderer::class),
