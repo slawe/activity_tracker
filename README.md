@@ -160,9 +160,11 @@ renderer.
 
 ### Auth
 
-Owns users and roles. Registration validates and hashes passwords in the same
-transaction as its activity event. Login verifies a password and regenerates the
-session ID. Logout clears authentication even if activity tracking fails.
+Owns users and roles. Registration validates input and hashes the password
+before opening the database transaction. The user insert, registration activity event,
+and relevant daily aggregate update are written atomically.
+Login verifies a password and regenerates the session ID.
+Logout clears authentication even if activity tracking fails.
 
 ### Activity
 
