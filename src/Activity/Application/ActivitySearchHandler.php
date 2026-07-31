@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Activity\Application;
 
-use App\Activity\Domain\ActivityRepositoryInterface;
-
 final class ActivitySearchHandler
 {
     public function __construct(
-        private readonly ActivityRepositoryInterface $activities,
+        private readonly ActivitySearchRepositoryInterface $activities,
     ) {
     }
 

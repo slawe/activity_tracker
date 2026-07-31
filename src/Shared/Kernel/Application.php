@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Kernel;
 
 use App\Activity\Application\ActivitySearchHandler;
+use App\Activity\Application\ActivitySearchRepositoryInterface;
 use App\Activity\Application\ActivityTracker;
 use App\Activity\Application\TrackActivityHandler;
 use App\Activity\Domain\ActivityRepositoryInterface;
@@ -105,10 +106,15 @@ final class Application
             UserRepositoryInterface::class,
             static fn (Container $c): UserRepositoryInterface => new PdoUserRepository($c->get(PDO::class)),
         );
-        $container->set(
-            ActivityRepositoryInterface::class,
-            static fn (Container $c): ActivityRepositoryInterface => new PdoActivityRepository($c->get(PDO::class)),
-        );
+        $container->set(PdoActivityRepository::class, static fn (Container $c): PdoActivityRepository => new PdoActivityRepository(
+            $c->get(PDO::class),
+        ));
+        $container->set(ActivityRepositoryInterface::class, static fn (Container $c): ActivityRepositoryInterface => $c->get(
+            PdoActivityRepository::class,
+        ));
+        $container->set(ActivitySearchRepositoryInterface::class, static fn (Container $c): ActivitySearchRepositoryInterface => $c->get(
+            PdoActivityRepository::class,
+        ));
         $container->set(
             UserPageStateRepositoryInterface::class,
             static fn (Container $c): UserPageStateRepositoryInterface => new PdoUserPageStateRepository(
@@ -131,7 +137,7 @@ final class Application
             $c->get(DailyActivityCounter::class),
             $c->get(TransactionManager::class),
         ));
-        $container->set(ActivitySearchHandler::class, static fn (Container $c): ActivitySearchHandler => new ActivitySearchHandler($c->get(ActivityRepositoryInterface::class)));
+        $container->set(ActivitySearchHandler::class, static fn (Container $c): ActivitySearchHandler => new ActivitySearchHandler($c->get(ActivitySearchRepositoryInterface::class)));
     }
 
     private static function registerAuthServices(Container $container): void

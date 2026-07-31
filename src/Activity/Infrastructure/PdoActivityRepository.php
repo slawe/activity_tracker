@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Activity\Infrastructure;
 
 use App\Activity\Application\ActivitySearchQuery;
+use App\Activity\Application\ActivitySearchRepositoryInterface;
 use App\Activity\Application\ActivitySearchResult;
 use App\Activity\Domain\ActivityAction;
 use App\Activity\Domain\ActivityEvent;
@@ -12,7 +13,7 @@ use App\Activity\Domain\ActivityRepositoryInterface;
 use DateTimeImmutable;
 use PDO;
 
-final class PdoActivityRepository implements ActivityRepositoryInterface
+final class PdoActivityRepository implements ActivityRepositoryInterface, ActivitySearchRepositoryInterface
 {
     public function __construct(
         private readonly PDO $connection,
