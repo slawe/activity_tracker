@@ -32,14 +32,14 @@ return static function (Router $router, Container $container): void {
     $reports = $container->get(ReportsController::class);
 
     $router->get('/login', [$login, 'show']);
-    $router->post('/login', [$login, 'submit']);
+    $router->post('/login', [$login, 'submit'])->csrf();
     $router->get('/register', [$register, 'show']);
-    $router->post('/register', [$register, 'submit']);
-    $router->post('/logout', [$logout, 'submit']);
-    $router->get('/page-a', [$pageA, 'show']);
-    $router->post('/page-a/buy-cow', [$pageA, 'buy']);
-    $router->get('/page-b', [$pageB, 'show']);
-    $router->post('/page-b/download', [$pageB, 'download']);
-    $router->get('/admin/stats', [$stats, 'show']);
-    $router->get('/admin/reports', [$reports, 'show']);
+    $router->post('/register', [$register, 'submit'])->csrf();
+    $router->post('/logout', [$logout, 'submit'])->auth()->csrf();
+    $router->get('/page-a', [$pageA, 'show'])->auth();
+    $router->post('/page-a/buy-cow', [$pageA, 'buy'])->auth()->csrf();
+    $router->get('/page-b', [$pageB, 'show'])->auth();
+    $router->post('/page-b/download', [$pageB, 'download'])->auth()->csrf();
+    $router->get('/admin/stats', [$stats, 'show'])->admin();
+    $router->get('/admin/reports', [$reports, 'show'])->admin();
 };

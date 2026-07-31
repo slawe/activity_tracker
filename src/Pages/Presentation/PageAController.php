@@ -28,10 +28,7 @@ final class PageAController
 
     public function show(Request $request): Response
     {
-        $user = $this->currentUserProvider->get();
-        if ($user === null) {
-            return new RedirectResponse('/login');
-        }
+        $user = $this->currentUserProvider->requireUser();
 
         $this->viewPage->handle($user->id, ActivityPage::A, $request->ipAddress(), $request->userAgent());
 
@@ -45,13 +42,7 @@ final class PageAController
 
     public function buy(Request $request): Response
     {
-        $user = $this->currentUserProvider->get();
-        if ($user === null) {
-            return new RedirectResponse('/login');
-        }
-        if (!$this->csrf->isValid($request->postString('_csrf'))) {
-            return new HtmlResponse('<h1>419 Page Expired</h1>', 419);
-        }
+        $user = $this->currentUserProvider->requireUser();
 
         $this->buyCow->handle($user->id, $request->ipAddress(), $request->userAgent());
 

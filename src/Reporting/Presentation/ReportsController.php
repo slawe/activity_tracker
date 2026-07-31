@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Reporting\Presentation;
 
-use App\Auth\Presentation\AdminAccessGuard;
+use App\Auth\Application\CurrentUserProvider;
 use App\Reporting\Application\DailyActivityReportHandler;
 use App\Reporting\Application\DailyActivityReportQuery;
 use App\Shared\Kernel\Http\HtmlResponse;
@@ -16,7 +16,7 @@ use App\Shared\Kernel\View\ViewRenderer;
 final class ReportsController
 {
     public function __construct(
-        private readonly AdminAccessGuard $adminAccessGuard,
+        private readonly CurrentUserProvider $currentUserProvider,
         private readonly DailyActivityReportHandler $reports,
         private readonly CsrfTokenManager $csrf,
         private readonly ViewRenderer $views,
@@ -25,11 +25,7 @@ final class ReportsController
 
     public function show(Request $request): Response
     {
-        $admin = $this->adminAccessGuard->requireAdmin();
-
-        if ($admin instanceof Response) {
-            return $admin;
-        }
+        $admin = $this->currentUserProvider->requireUser();
 
         $dateRange = DateFilterRange::fromInput(
             $request->queryString('date_from'),

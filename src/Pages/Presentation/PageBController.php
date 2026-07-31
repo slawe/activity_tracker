@@ -10,7 +10,6 @@ use App\Pages\Application\DownloadFileHandler;
 use App\Pages\Application\ViewPageHandler;
 use App\Shared\Kernel\Http\FileDownloadResponse;
 use App\Shared\Kernel\Http\HtmlResponse;
-use App\Shared\Kernel\Http\RedirectResponse;
 use App\Shared\Kernel\Request;
 use App\Shared\Kernel\Response;
 use App\Shared\Kernel\Security\CsrfTokenManager;
@@ -29,10 +28,7 @@ final class PageBController
 
     public function show(Request $request): Response
     {
-        $user = $this->currentUserProvider->get();
-        if ($user === null) {
-            return new RedirectResponse('/login');
-        }
+        $user = $this->currentUserProvider->requireUser();
 
         $this->viewPage->handle($user->id, ActivityPage::B, $request->ipAddress(), $request->userAgent());
 
@@ -45,13 +41,7 @@ final class PageBController
 
     public function download(Request $request): Response
     {
-        $user = $this->currentUserProvider->get();
-        if ($user === null) {
-            return new RedirectResponse('/login');
-        }
-        if (!$this->csrf->isValid($request->postString('_csrf'))) {
-            return new HtmlResponse('<h1>419 Page Expired</h1>', 419);
-        }
+        $user = $this->currentUserProvider->requireUser();
 
         $path = $this->downloadFile->handle($user->id, $request->ipAddress(), $request->userAgent());
 

@@ -36,10 +36,6 @@ final class LoginController
 
     public function submit(Request $request): Response
     {
-        if (!$this->csrf->isValid($request->postString('_csrf'))) {
-            return $this->render('The form expired. Please try again.', 419);
-        }
-
         try {
             $this->handler->handle(new LoginUserCommand(
                 $request->postString('email', '') ?? '',

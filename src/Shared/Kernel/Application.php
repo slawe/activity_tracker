@@ -16,7 +16,9 @@ use App\Auth\Application\LogoutUserHandler;
 use App\Auth\Application\RegisterUserHandler;
 use App\Auth\Domain\UserRepositoryInterface;
 use App\Auth\Infrastructure\PdoUserRepository;
-use App\Auth\Presentation\AdminAccessGuard;
+use App\Auth\Presentation\Guards\AdminGuard;
+use App\Auth\Presentation\Guards\AuthGuard;
+use App\Auth\Presentation\Guards\CsrfGuard;
 use App\Auth\Presentation\LoginController;
 use App\Auth\Presentation\LogoutController;
 use App\Auth\Presentation\RegisterController;
@@ -35,6 +37,7 @@ use App\Reporting\Presentation\ReportsController;
 use App\Reporting\Presentation\StatsController;
 use App\Shared\Kernel\Database\Connection;
 use App\Shared\Kernel\Database\TransactionManager;
+use App\Shared\Kernel\Routing\RouteGuardRunner;
 use App\Shared\Kernel\Security\CsrfTokenManager;
 use App\Shared\Kernel\Security\PasswordHasher;
 use App\Shared\Kernel\Security\Session;
@@ -57,7 +60,9 @@ final class Application
         assert($session instanceof Session);
         $session->start(getenv('SESSION_NAME') ?: 'activity_tracker_session');
 
-        $router = new Router();
+        $guardRunner = $container->get(RouteGuardRunner::class);
+        assert($guardRunner instanceof RouteGuardRunner);
+        $router = new Router($guardRunner);
         $routes = require $projectRoot . '/config/routes.php';
         $routes($router, $container);
 
@@ -98,6 +103,7 @@ final class Application
         $container->set(TransactionManager::class, static fn (Container $c): TransactionManager => new TransactionManager(
             $c->get(PDO::class),
         ));
+        $container->set(RouteGuardRunner::class, static fn (Container $c): RouteGuardRunner => new RouteGuardRunner($c));
     }
 
     private static function registerRepositories(Container $container): void
@@ -146,8 +152,14 @@ final class Application
             $c->get(Session::class),
             $c->get(UserRepositoryInterface::class),
         ));
-        $container->set(AdminAccessGuard::class, static fn (Container $c): AdminAccessGuard => new AdminAccessGuard(
+        $container->set(AuthGuard::class, static fn (Container $c): AuthGuard => new AuthGuard(
             $c->get(CurrentUserProvider::class),
+        ));
+        $container->set(AdminGuard::class, static fn (Container $c): AdminGuard => new AdminGuard(
+            $c->get(CurrentUserProvider::class),
+        ));
+        $container->set(CsrfGuard::class, static fn (Container $c): CsrfGuard => new CsrfGuard(
+            $c->get(CsrfTokenManager::class),
         ));
         $container->set(RegisterUserHandler::class, static fn (Container $c): RegisterUserHandler => new RegisterUserHandler(
             $c->get(UserRepositoryInterface::class),
@@ -226,14 +238,14 @@ final class Application
             $c->get(ViewRenderer::class),
         ));
         $container->set(StatsController::class, static fn (Container $c): StatsController => new StatsController(
-            $c->get(AdminAccessGuard::class),
+            $c->get(CurrentUserProvider::class),
             $c->get(ActivitySearchHandler::class),
             $c->get(UserRepositoryInterface::class),
             $c->get(CsrfTokenManager::class),
             $c->get(ViewRenderer::class),
         ));
         $container->set(ReportsController::class, static fn (Container $c): ReportsController => new ReportsController(
-            $c->get(AdminAccessGuard::class),
+            $c->get(CurrentUserProvider::class),
             $c->get(DailyActivityReportHandler::class),
             $c->get(CsrfTokenManager::class),
             $c->get(ViewRenderer::class),

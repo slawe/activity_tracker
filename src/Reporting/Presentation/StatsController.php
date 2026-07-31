@@ -8,8 +8,8 @@ use App\Activity\Application\ActivitySearchHandler;
 use App\Activity\Application\ActivitySearchQuery;
 use App\Activity\Application\ActivitySearchResult;
 use App\Activity\Domain\ActivityAction;
+use App\Auth\Application\CurrentUserProvider;
 use App\Auth\Domain\UserRepositoryInterface;
-use App\Auth\Presentation\AdminAccessGuard;
 use App\Shared\Kernel\Http\HtmlResponse;
 use App\Shared\Kernel\Request;
 use App\Shared\Kernel\Response;
@@ -19,7 +19,7 @@ use App\Shared\Kernel\View\ViewRenderer;
 final class StatsController
 {
     public function __construct(
-        private readonly AdminAccessGuard $adminAccessGuard,
+        private readonly CurrentUserProvider $currentUserProvider,
         private readonly ActivitySearchHandler $search,
         private readonly UserRepositoryInterface $users,
         private readonly CsrfTokenManager $csrf,
@@ -29,11 +29,7 @@ final class StatsController
 
     public function show(Request $request): Response
     {
-        $admin = $this->adminAccessGuard->requireAdmin();
-
-        if ($admin instanceof Response) {
-            return $admin;
-        }
+        $admin = $this->currentUserProvider->requireUser();
 
         $dateRange = DateFilterRange::fromInput(
             $request->queryString('date_from'),

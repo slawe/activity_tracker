@@ -7,6 +7,7 @@ namespace App\Auth\Application;
 use App\Auth\Domain\UserRepositoryInterface;
 use App\Shared\Kernel\Security\AuthenticatedUser;
 use App\Shared\Kernel\Security\Session;
+use LogicException;
 
 final class CurrentUserProvider
 {
@@ -31,5 +32,10 @@ final class CurrentUserProvider
         }
 
         return new AuthenticatedUser($user->id, $user->email, $user->role->value);
+    }
+
+    public function requireUser(): AuthenticatedUser
+    {
+        return $this->get() ?? throw new LogicException('An authenticated user is required.');
     }
 }
