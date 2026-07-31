@@ -7,15 +7,14 @@ namespace App\Pages\Application;
 use App\Activity\Application\ActivityTracker;
 use App\Activity\Application\TrackActivityCommand;
 use App\Activity\Domain\ActivityAction;
+use App\Activity\Domain\ActivityPage;
+use App\Activity\Domain\ActivityTarget;
 use App\Pages\Domain\UserPageStateRepositoryInterface;
 use App\Shared\Kernel\Database\TransactionManager;
 use DateTimeImmutable;
 
 final class BuyCowHandler
 {
-    private const PAGE = 'A';
-    private const ACTION = 'buy-a-cow';
-
     public function __construct(
         private readonly UserPageStateRepositoryInterface $states,
         private readonly ActivityTracker $activityTracker,
@@ -25,7 +24,7 @@ final class BuyCowHandler
 
     public function hasBoughtCow(int $userId): bool
     {
-        return $this->states->exists($userId, self::PAGE, self::ACTION);
+        return $this->states->exists($userId, ActivityPage::A->value, ActivityTarget::BuyCow->value);
     }
 
     public function handle(int $userId, string $ipAddress, string $userAgent): void
@@ -33,8 +32,8 @@ final class BuyCowHandler
         $this->transactions->run(function () use ($userId, $ipAddress, $userAgent): void {
             $created = $this->states->addIfMissing(
                 $userId,
-                self::PAGE,
-                self::ACTION,
+                ActivityPage::A->value,
+                ActivityTarget::BuyCow->value,
                 new DateTimeImmutable(),
             );
 
@@ -42,8 +41,8 @@ final class BuyCowHandler
                 $this->activityTracker->track(new TrackActivityCommand(
                     $userId,
                     ActivityAction::ButtonClick,
-                    self::PAGE,
-                    self::ACTION,
+                    ActivityPage::A,
+                    ActivityTarget::BuyCow,
                     $ipAddress,
                     $userAgent,
                 ));

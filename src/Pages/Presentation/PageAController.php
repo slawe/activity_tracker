@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pages\Presentation;
 
+use App\Activity\Domain\ActivityPage;
 use App\Auth\Application\CurrentUserProvider;
 use App\Pages\Application\BuyCowHandler;
 use App\Pages\Application\ViewPageHandler;
@@ -32,7 +33,7 @@ final class PageAController
             return new RedirectResponse('/login');
         }
 
-        $this->viewPage->handle($user->id, 'A', $request->ipAddress(), $request->userAgent());
+        $this->viewPage->handle($user->id, ActivityPage::A, $request->ipAddress(), $request->userAgent());
 
         return new HtmlResponse($this->views->render('pages/page-a.php', [
             'title' => 'Page A',

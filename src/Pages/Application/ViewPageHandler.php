@@ -7,6 +7,7 @@ namespace App\Pages\Application;
 use App\Activity\Application\ActivityTracker;
 use App\Activity\Application\TrackActivityCommand;
 use App\Activity\Domain\ActivityAction;
+use App\Activity\Domain\ActivityPage;
 
 final class ViewPageHandler
 {
@@ -15,7 +16,7 @@ final class ViewPageHandler
     ) {
     }
 
-    public function handle(int $userId, string $page, string $ipAddress, string $userAgent): void
+    public function handle(int $userId, ActivityPage $page, string $ipAddress, string $userAgent): void
     {
         $this->activityTracker->track(new TrackActivityCommand(
             $userId,

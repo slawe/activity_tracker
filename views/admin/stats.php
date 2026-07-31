@@ -45,8 +45,8 @@ $paginationQuery = static function (int $page) use ($filters): string {
                 <td><?= htmlspecialchars($event->createdAt->format('Y-m-d H:i:s'), ENT_QUOTES, 'UTF-8') ?></td>
                 <td><?= htmlspecialchars($event->userEmail ?? 'guest', ENT_QUOTES, 'UTF-8') ?></td>
                 <td class="activity-action"><?= htmlspecialchars($event->action->value, ENT_QUOTES, 'UTF-8') ?></td>
-                <td><?= htmlspecialchars($event->page ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
-                <td><?= htmlspecialchars($event->target ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                <td><?= htmlspecialchars($event->page?->value ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
+                <td><?= htmlspecialchars($event->target?->value ?? '—', ENT_QUOTES, 'UTF-8') ?></td>
                 <td><?= htmlspecialchars($event->ipAddress, ENT_QUOTES, 'UTF-8') ?></td>
                 <td><?= htmlspecialchars($event->userAgent, ENT_QUOTES, 'UTF-8') ?></td>
             </tr>

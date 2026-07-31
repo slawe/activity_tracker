@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pages\Presentation;
 
+use App\Activity\Domain\ActivityPage;
 use App\Auth\Application\CurrentUserProvider;
 use App\Pages\Application\DownloadFileHandler;
 use App\Pages\Application\ViewPageHandler;
@@ -33,7 +34,7 @@ final class PageBController
             return new RedirectResponse('/login');
         }
 
-        $this->viewPage->handle($user->id, 'B', $request->ipAddress(), $request->userAgent());
+        $this->viewPage->handle($user->id, ActivityPage::B, $request->ipAddress(), $request->userAgent());
 
         return new HtmlResponse($this->views->render('pages/page-b.php', [
             'title' => 'Page B',

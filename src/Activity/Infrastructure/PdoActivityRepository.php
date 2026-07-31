@@ -9,7 +9,9 @@ use App\Activity\Application\ActivitySearchRepositoryInterface;
 use App\Activity\Application\ActivitySearchResult;
 use App\Activity\Domain\ActivityAction;
 use App\Activity\Domain\ActivityEvent;
+use App\Activity\Domain\ActivityPage;
 use App\Activity\Domain\ActivityRepositoryInterface;
+use App\Activity\Domain\ActivityTarget;
 use DateTimeImmutable;
 use PDO;
 
@@ -31,8 +33,8 @@ final class PdoActivityRepository implements ActivityRepositoryInterface, Activi
         $statement->execute([
             'user_id' => $event->userId,
             'action' => $event->action->value,
-            'page' => $event->page,
-            'target' => $event->target,
+            'page' => $event->page?->value,
+            'target' => $event->target?->value,
             'ip_address' => $event->ipAddress,
             'user_agent' => $event->userAgent,
             'created_at' => $event->createdAt->format('Y-m-d H:i:s'),
@@ -120,8 +122,8 @@ final class PdoActivityRepository implements ActivityRepositoryInterface, Activi
         return new ActivityEvent(
             $row['user_id'] === null ? null : (int) $row['user_id'],
             ActivityAction::from((string) $row['action']),
-            $row['page'] === null ? null : (string) $row['page'],
-            $row['target'] === null ? null : (string) $row['target'],
+            $row['page'] === null ? null : ActivityPage::from((string) $row['page']),
+            $row['target'] === null ? null : ActivityTarget::from((string) $row['target']),
             (string) $row['ip_address'],
             (string) $row['user_agent'],
             new DateTimeImmutable((string) $row['created_at']),

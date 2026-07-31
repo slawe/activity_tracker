@@ -6,6 +6,8 @@ namespace App\Reporting\Application;
 
 use App\Activity\Domain\ActivityAction;
 use App\Activity\Domain\ActivityEvent;
+use App\Activity\Domain\ActivityPage;
+use App\Activity\Domain\ActivityTarget;
 use App\Reporting\Domain\DailyActivityReportRepositoryInterface;
 
 final class DailyActivityCounter
@@ -18,14 +20,14 @@ final class DailyActivityCounter
     public function count(ActivityEvent $event): void
     {
         $increments = match (true) {
-            $event->action === ActivityAction::ViewPage && $event->page === 'A' => [1, 0, 0, 0],
-            $event->action === ActivityAction::ViewPage && $event->page === 'B' => [0, 1, 0, 0],
+            $event->action === ActivityAction::ViewPage && $event->page === ActivityPage::A => [1, 0, 0, 0],
+            $event->action === ActivityAction::ViewPage && $event->page === ActivityPage::B => [0, 1, 0, 0],
             $event->action === ActivityAction::ButtonClick
-                && $event->page === 'A'
-                && $event->target === 'buy-a-cow' => [0, 0, 1, 0],
+                && $event->page === ActivityPage::A
+                && $event->target === ActivityTarget::BuyCow => [0, 0, 1, 0],
             $event->action === ActivityAction::ButtonClick
-                && $event->page === 'B'
-                && $event->target === 'download' => [0, 0, 0, 1],
+                && $event->page === ActivityPage::B
+                && $event->target === ActivityTarget::Download => [0, 0, 0, 1],
             default => null,
         };
 

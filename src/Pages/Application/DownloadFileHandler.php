@@ -7,6 +7,8 @@ namespace App\Pages\Application;
 use App\Activity\Application\ActivityTracker;
 use App\Activity\Application\TrackActivityCommand;
 use App\Activity\Domain\ActivityAction;
+use App\Activity\Domain\ActivityPage;
+use App\Activity\Domain\ActivityTarget;
 
 final class DownloadFileHandler
 {
@@ -21,8 +23,8 @@ final class DownloadFileHandler
         $this->activityTracker->track(new TrackActivityCommand(
             $userId,
             ActivityAction::ButtonClick,
-            'B',
-            'download',
+            ActivityPage::B,
+            ActivityTarget::Download,
             $ipAddress,
             $userAgent,
         ));
