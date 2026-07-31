@@ -8,6 +8,7 @@ use App\Activity\Domain\ActivityAction;
 /** @var ActivitySearchResult $result */
 /** @var list<ActivityAction> $actions */
 /** @var array{date_from: string, date_to: string, user_email: string, action: string} $filters */
+/** @var string $today */
 
 $paginationQuery = static function (int $page) use ($filters): string {
     return http_build_query([...$filters, 'page' => $page]);
@@ -15,8 +16,8 @@ $paginationQuery = static function (int $page) use ($filters): string {
 ?>
 <h1>Activity Statistics</h1>
 <form method="get" class="filters">
-    <label>Date from <input type="date" name="date_from" value="<?= htmlspecialchars($filters['date_from'], ENT_QUOTES, 'UTF-8') ?>"></label>
-    <label>Date to <input type="date" name="date_to" value="<?= htmlspecialchars($filters['date_to'], ENT_QUOTES, 'UTF-8') ?>"></label>
+    <label>Date from <input type="date" name="date_from" value="<?= htmlspecialchars($filters['date_from'], ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>"></label>
+    <label>Date to <input type="date" name="date_to" value="<?= htmlspecialchars($filters['date_to'], ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>"></label>
     <label>User email
         <input type="email" name="user_email" value="<?= htmlspecialchars($filters['user_email'], ENT_QUOTES, 'UTF-8') ?>">
     </label>

@@ -8,11 +8,12 @@ use App\Reporting\Domain\DailyActivityReport;
 /** @var list<array<string, int|string>> $chartData */
 /** @var string $dateFrom */
 /** @var string $dateTo */
+/** @var string $today */
 ?>
 <h1>Daily Reports</h1>
 <form method="get" class="filters">
-    <label>Date from <input type="date" name="date_from" value="<?= htmlspecialchars($dateFrom, ENT_QUOTES, 'UTF-8') ?>"></label>
-    <label>Date to <input type="date" name="date_to" value="<?= htmlspecialchars($dateTo, ENT_QUOTES, 'UTF-8') ?>"></label>
+    <label>Date from <input type="date" name="date_from" value="<?= htmlspecialchars($dateFrom, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>"></label>
+    <label>Date to <input type="date" name="date_to" value="<?= htmlspecialchars($dateTo, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>"></label>
     <button type="submit">Apply</button>
 </form>
 <div class="chart-container">

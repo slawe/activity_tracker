@@ -12,7 +12,6 @@ use App\Shared\Kernel\Request;
 use App\Shared\Kernel\Response;
 use App\Shared\Kernel\Security\CsrfTokenManager;
 use App\Shared\Kernel\View\ViewRenderer;
-use DateTimeImmutable;
 
 final class ReportsController
 {
@@ -32,14 +31,15 @@ final class ReportsController
             return $admin;
         }
 
-        $today = new DateTimeImmutable('today');
-        $dateFrom = $this->date($request->queryString('date_from')) ?? $today->modify('-7 days');
-        $dateTo = $this->date($request->queryString('date_to')) ?? $today;
-        if ($dateFrom > $dateTo) {
-            [$dateFrom, $dateTo] = [$dateTo, $dateFrom];
-        }
+        $dateRange = DateFilterRange::fromInput(
+            $request->queryString('date_from'),
+            $request->queryString('date_to'),
+        );
 
-        $reports = $this->reports->handle(new DailyActivityReportQuery($dateFrom, $dateTo));
+        $reports = $this->reports->handle(new DailyActivityReportQuery(
+            $dateRange->dateFrom,
+            $dateRange->dateTo,
+        ));
         $chartData = array_map(static fn ($report): array => [
             'date' => $report->date->format('Y-m-d'),
             'pageAViews' => $report->pageAViews,
@@ -54,19 +54,9 @@ final class ReportsController
             'csrfToken' => $this->csrf->token(),
             'reports' => $reports,
             'chartData' => $chartData,
-            'dateFrom' => $dateFrom->format('Y-m-d'),
-            'dateTo' => $dateTo->format('Y-m-d'),
+            'dateFrom' => $dateRange->dateFrom->format('Y-m-d'),
+            'dateTo' => $dateRange->dateTo->format('Y-m-d'),
+            'today' => $dateRange->today->format('Y-m-d'),
         ]));
-    }
-
-    private function date(?string $value): ?DateTimeImmutable
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
-
-        return $date !== false && $date->format('Y-m-d') === $value ? $date : null;
     }
 }
