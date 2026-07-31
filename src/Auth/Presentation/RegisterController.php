@@ -51,6 +51,8 @@ final class RegisterController
             return $this->render($exception->getMessage(), 422);
         }
 
+        $this->csrf->refresh();
+
         return new RedirectResponse('/login?registered=1');
     }
 
