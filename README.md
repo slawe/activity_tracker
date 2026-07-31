@@ -264,8 +264,9 @@ and centralized session storage.
   exercise deterministic and are isolated behind `ActivityTracker`.
 - Session authentication is appropriate for the single application; multiple PHP
   replicas would use Redis or another shared session store.
-- Daily rows only exist for dates with activity; a reporting/calendar layer could
-  fill zero-activity dates when a continuous axis is required.
+- The database stores daily rows only for dates with activity. For a bounded report
+  range, the reporting application layer fills missing calendar dates with zero
+  counters so the graph and table share one continuous dataset.
 - The SVG chart is intentionally dependency-free and minimal. A production UI would
   add richer interactive tooltips, accessible data descriptions, and richer
   responsive axes.

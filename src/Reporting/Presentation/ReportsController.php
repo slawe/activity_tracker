@@ -33,7 +33,7 @@ final class ReportsController
         }
 
         $today = new DateTimeImmutable('today');
-        $dateFrom = $this->date($request->queryString('date_from')) ?? $today->modify('-29 days');
+        $dateFrom = $this->date($request->queryString('date_from')) ?? $today->modify('-7 days');
         $dateTo = $this->date($request->queryString('date_to')) ?? $today;
         if ($dateFrom > $dateTo) {
             [$dateFrom, $dateTo] = [$dateTo, $dateFrom];
